@@ -1,0 +1,48 @@
+try:
+    # python2
+    from Tkinter import *
+    from Tkinter import Text
+except ImportError:
+    # python3
+    from tkinter import *
+    from tkinter import Text
+
+root = Tk()  # create a window
+window_width = root.winfo_screenwidth()  # This is for adjusting your screen width
+window_height = root.winfo_screenheight()  # This is for adjusting your screen height
+root.geometry("%dx%d+0+0" % (window_width, window_height))  # scale of the window
+root.title("To-do-list App")  # Create the title of the window
+root.configure(background="#ecff33")
+
+entry_task = StringVar()
+
+
+def list_entry():  # This function will help us to enter tasks in listbox
+    list_box.insert(END, entry_task.get())
+    entry.delete(0, END)
+
+
+def delete_all():  # This function will help us to delete all tasks
+    list_box.delete(0, END)
+
+
+def delete():  # Tis function will delete the selected task
+    list_box.delete(ANCHOR)
+
+
+entry = Entry(root, bg="#9fff33", width=90, textvariable=entry_task)  # Make text entry
+entry.grid(row=0, column=0, sticky="W", pady=10, ipady=10)  # Place it on the window
+add_task_bttn = Button(root, text="Add task", bg="white", width=9, command=list_entry)  # Create add task button
+add_task_bttn.grid(row=0, column=7, sticky="W", padx=200, pady=10, ipady=1)  # Place it on the window
+delete_bttn = Button(root, text="Delete", bg="white", width=9, command=delete)  # Create a delete button
+delete_bttn.grid(row=1, column=7, sticky="W", padx=200, pady=10, ipady=1)  # Place it on window
+delete_all_task_bttn = Button(root, text="Delete all", bg="white", width=9, command=delete_all)  # Create a delete all button
+delete_all_task_bttn.grid(row=2, column=7, sticky="W", padx=200, pady=1, ipady=1)  # Place it on the window
+scrollbar = Scrollbar(root, orient=VERTICAL)  # Create a scrollbar
+scrollbar.grid(row=1, column=1, sticky="E")  # Place it on the window
+list_box = Listbox(root, bg="white", yscrollcommand=scrollbar.set, height=35, width=90)  # Create a list box
+list_box.grid(row=1, column=0, sticky="W", pady=10, ipady=10)  # Place it on the window
+scrollbar.config(command=list_box.yview)
+lines = len(entry_task.get())
+list_box.yview_scroll(lines, 'units')
+root.mainloop()  # Infinite loop that let's our window run until you close it
