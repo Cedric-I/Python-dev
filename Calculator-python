@@ -1,0 +1,77 @@
+# -*- coding: utf-8 -*-
+try:
+    from tkinter import *
+except ImportError:
+    from Tkinter import *
+    
+import math
+root = Tk()
+root.title('CALCULATOR')
+num1 = StringVar()
+
+# sqrt = lambda: math.sqrt(int(num1))
+
+def squart(number):
+    cal_entry(number)
+    
+    
+def cal_entry(number):
+    num1.set(num1.get() + number)
+
+
+def delete():
+    num1.set(num1.get()[:-1])
+
+
+def calculate():
+    num1.set(eval(num1.get()))
+
+
+def clear():
+    num1.set("")
+
+
+txt_display = Entry(root, width=23, textvariable=num1, bg='light blue', font=('arial', 14, 'bold'))
+txt_display.grid(columnspan=100)
+plus_button = Button(root, text='+', command=lambda: cal_entry('+'), width=6)
+plus_button.grid(row=1, column=0)
+minus_button = Button(root, text='-', command=lambda: cal_entry('-'), width=6)
+minus_button.grid(row=2, column=0)
+multiply_button = Button(root, text='*', command=lambda: cal_entry('*'), width=6)
+multiply_button.grid(row=3, column=0)
+divide_button = Button(root, text='/', command=lambda: cal_entry('/'), width=6)
+divide_button.grid(row=4, column=0)
+
+button_1 = Button(root, text='1', command=lambda: cal_entry('1'), width=6)
+button_1.grid(row=1, column=1)
+button_2 = Button(root, text='2', command=lambda: cal_entry('2'), width=6)
+button_2.grid(row=1, column=2)
+button_3 = Button(root, text='3', command=lambda: cal_entry('3'), width=6)
+button_3.grid(row=1, column=3)
+button_4 = Button(root, text='4', command=lambda: cal_entry('4'), width=6)
+button_4.grid(row=2, column=1)
+button_5 = Button(root, text='5', command=lambda: cal_entry('5'), width=6)
+button_5.grid(row=2, column=2)
+button_6 = Button(root, text='6', command=lambda: cal_entry('6'), width=6)
+button_6.grid(row=2, column=3)
+button_7 = Button(root, text='7', command=lambda: cal_entry('7'), width=6)
+button_7.grid(row=3, column=1)
+button_8 = Button(root, text='8', command=lambda: cal_entry('8'), width=6)
+button_8.grid(row=3, column=2)
+button_9 = Button(root, text='9', command=lambda: cal_entry('9'), width=6)
+button_9.grid(row=3, column=3)
+button_0 = Button(root, text='0', command=lambda: cal_entry('0'), width=6)
+button_0.grid(row=4, column=1)
+button_dot = Button(root, text='.', command=lambda: cal_entry('.'), width=6)
+button_dot.grid(row=4, column=2)
+button_equal = Button(root, text='=', command=calculate, width=6)
+button_equal.grid(row=4, column=3)
+button_clear = Button(root, text='CA', command=clear, width=6)
+button_clear.grid(row=1, column=4)
+button_quit = Button(root, text='OFF', width=6)
+button_quit.grid(row=4, column=4)
+button_root = Button(root, text='√', command=lambda: squart('√'), width=6)
+button_root.grid(row=2, column=4)
+button_percent = Button(root, text='DEL', command=delete, width=6)
+button_percent.grid(row=3, column=4)
+root.mainloop()
