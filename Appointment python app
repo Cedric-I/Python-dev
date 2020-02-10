@@ -1,0 +1,166 @@
+# Python-dev
+Python Development
+# # -*- coding: utf-8 -*-
+import mysql.connector as mysql
+#### Keep in mind, I imported database password from other #####
+                 ##### file for security purposes #####
+from password import passcode
+try:
+    from tkinter import *
+except ImportError:
+    from Tkinter import *
+
+##### GUI section #####
+
+root = Tk()
+root.title('MAKE APPOINTMENT')
+root.geometry("1920x1080")
+canvas = Canvas(width=900, height=800, bg="#48833F")
+canvas.pack(fill="both", expand=True)
+
+#### Create Variables for text entry ####
+
+name = StringVar()
+first_name = StringVar()
+last_name = StringVar()
+phone = StringVar()
+email = StringVar()
+times = StringVar()
+doctor = StringVar()
+department = StringVar()
+
+###### GUI Widgets ######
+
+label = Label(canvas, text="FIRST NAME: ", bg="#48833F")
+label.place(x=7, y=10, height=25)
+txt_display = Entry(canvas, textvariable=first_name, bg='white', font=('arial', 12, 'bold'))
+txt_display.place(x = 10, y = 30, width=290, height=25)
+
+label1 = Label(canvas, text="LAST NAME: ", bg="#48833F")
+label1.place(x = 7, y = 60, height=25)
+txt_display1 = Entry(canvas, textvariable=last_name, bg='white', font=('arial', 12, 'bold'))
+txt_display1.place(x = 10, y = 80, width=290, height=25)
+
+label2 = Label(canvas, text="PHONE NUMBER: ", bg="#48833F")
+label2.place(x = 400, y = 10, height=25)
+txt_display2 = Entry(canvas, textvariable=phone, width=23, bg='white', font=('arial', 12, 'bold'))
+txt_display2.place(x = 400, y = 30, width=290, height=25)
+
+label3 = Label(canvas, text="EMAIL: ", bg="#48833F")
+label3.place(x = 400, y = 60, height=25)
+txt_display3 = Entry(canvas, textvariable=email, width=23, bg='white', font=('arial', 12, 'bold'))
+txt_display3.place(x = 400, y = 80, width=290, height=25)
+
+label4 = Label(canvas, text="TIME: ", bg="#48833F")
+label4.place(x = 400, y = 110, height=25)
+txt_display4 = Entry(canvas, textvariable=times, width=23, bg='white', font=('arial', 12, 'bold'))
+txt_display4.place(x = 400, y = 130, width=290, height=25)
+
+label5 = Label(canvas, text="DOCTOR'S NAME", bg="#48833F")
+label5.place(x = 800, y= 10, height=25)
+txt_display5 = Entry(canvas, textvariable=doctor, width=23, bg='white', font=('arial', 12, 'bold'))
+txt_display5.place(x = 800, y = 30, width=290, height=25)
+
+label6 = Label(canvas, text="DERPARTMENT: ", bg="#48833F")
+label6.place(x = 800, y = 60, height=25)
+drop_down = OptionMenu(canvas, department, "Cardiology", "Child Hospital", "Dentistry", "Opticianry", "Physical Therapy")
+drop_down.place(x = 800, y = 80, width=290, height=25)
+txt_display6 = Entry(canvas, textvariable=department, width=23, bg='white', font=('arial', 12, 'bold'))
+txt_display6.place(x = 800, y = 105, width=290, height=25)
+
+label = Label(canvas, text="SEARCH THE FIRST NAME: ", bg="#48833F")
+label.place(x=1200, y=300, height=25)
+txt_display = Entry(canvas, textvariable=name, bg='white', font=('arial', 12, 'bold'))
+txt_display.place(x = 1100, y = 320, width=290, height=25)
+
+#### Create  a listbox for previewing info ####
+
+label7 = Label(canvas, text="PREVIEW: ", bg="#48833F")
+label7.place(x = 550, y = 280, height=25)
+list_box = Listbox(canvas)
+list_box.place(x = 200, y = 300, width=800, height=360)
+
+def list_entry():
+    list_box.insert(END, first_name.get())
+    list_box.insert(END, last_name.get())
+    list_box.insert(END, phone.get())
+    list_box.insert(END, email.get())
+    list_box.insert(END, times.get())
+    list_box.insert(END, doctor.get())
+    list_box.insert(END, department.get())
+
+preview_bttn = Button(canvas, text="PREVIEW", bg="white", width=14, command=list_entry)
+preview_bttn.place(x = 900, y = 180)
+
+#### Get input data stored in database ####
+
+def data_submit():
+    db = mysql.connect(host = "localhost", user = "root", passwd = passcode, port = "3306", database = "appointments")
+    run = db.cursor()
+    val = (first_name.get(), last_name.get(), phone.get(), email.get(), times.get(), doctor.get(), department.get())
+    querry = (f"insert into appoint_tbl(first_name, last_name, phone, email, time_of_visit, doctor, department) values{val}")
+    run.execute(querry)
+    db.commit()
+    db.close()
+
+#### Check available time form database ####
+
+def check_time():
+     db = mysql.connect(host = "localhost", user = "root", passwd = passcode, port = "3306", database = "appointments")
+     run = db.cursor()
+     querry = ("select time_of_visit from appoint_tbl")
+     run.execute(querry)
+     time = run.fetchall()
+     list_box.insert(END, time)
+     db.commit()
+     db.close()
+
+#### Submit data into database ####
+
+submit_bttn = Button(canvas, text="SUBMIT", bg="white", width=14, command=data_submit)
+submit_bttn.place(x = 20, y = 180)
+
+#### Check time ####
+
+check_bttn = Button(canvas, text="CHECK TIME", bg="white", width=14, command=check_time)
+check_bttn.place(x = 500, y = 180)
+
+#### Search for patient #####
+
+def search_patient():
+    db = mysql.connect(host = "localhost", user = "root", passwd = passcode, port = "3306", database = "appointments", buffered=True)
+    run = db.cursor()
+    val = (name.get())
+    querry = (f"select first_name, last_name, phone, email, time_of_visit, doctor, department from appoint_tbl where first_name = '{val}'")
+    run.execute(querry)
+    db.commit()
+    db.close()
+    def edit(r):
+        m = ''.join(r)
+        list_box.insert(END, m)
+    for n in run.fetchall():
+        edit(n)
+
+####  Click to see data from database ####
+
+search_bttn = Button(canvas, text="SEARCH", bg="white", width=14, command=search_patient)
+search_bttn.place(x = 1200, y = 360)
+
+#### Clear screen ####
+
+def clear_screen():
+    txt_display.delete(0, 'end')
+    txt_display1.delete(0, 'end')
+    txt_display2.delete(0, 'end')
+    txt_display3.delete(0, 'end')
+    txt_display4.delete(0, 'end')
+    txt_display5.delete(0, 'end')
+    txt_display6.delete(0, 'end')
+    list_box.delete(0, 'end')
+
+clear_bttn = Button(canvas, text="CLEAR", bg="white", width=14, command=clear_screen)
+clear_bttn.place(x = 20, y = 360)
+
+#### run your GUI ####
+
+root.mainloop()
